@@ -11,6 +11,7 @@ A Python implementation of automatic differentiation (autodiff) engine that supp
 - **Exponential and Logarithmic Functions**: Supports exp and log operations
 - **Chain Rule Support**: Automatically handles complex nested expressions using the chain rule
 - **Type Annotations**: Full type hints for better code maintainability and IDE support
+- **Labeled Values**: Value objects can be labeled for better graph visualization and debugging
 
 ## Installation
 
@@ -32,9 +33,11 @@ pip install -r requirements.txt
 ```python
 from autodiff_engine.value import Value
 
-# Create variables
+# Create variables (with optional labels for better visualization)
 x = Value(2.0, label='x')
 y = Value(3.0, label='y')
+
+# Note: Intermediate results can be labeled manually for better visualization
 
 # Build computational graph
 z = x * y + x**2
@@ -100,7 +103,7 @@ The `Value` class is the core of the autodiff engine:
 
 - **Data**: Stores the actual numerical value
 - **Grad**: Stores the gradient with respect to this value
-- **Label**: Human-readable label for visualization
+- **Label**: Optional human-readable label for better graph visualization
 - **Children**: References to child nodes in the computational graph
 - **Operation**: The operation that created this value
 
@@ -113,6 +116,29 @@ The `Value` class is the core of the autodiff engine:
 ### Computational Graph
 
 The engine automatically builds a computational graph as you perform operations. Each `Value` object maintains references to its children and the operation that created it, enabling efficient gradient computation through backpropagation.
+
+### Labeling for Visualization
+
+You can optionally label `Value` objects to make the computational graph visualization more readable:
+
+```python
+# Create labeled input values
+x = Value(2.0, label="x")
+y = Value(3.0, label="y")
+angle = Value(0.5, label="θ")
+
+# For intermediate results, you can manually assign labels
+z = x * y
+z.label = "z = x*y"  # Label intermediate result
+
+result = z + angle.sin()
+result.label = "result = z + sin(θ)"  # Label final result
+
+# The labels will appear in the graph visualization
+result.visualize('labeled_graph')
+```
+
+When labels are provided, they will be displayed in the graph nodes instead of the raw values, making it easier to understand the computation flow. Input nodes (leaf nodes) can be labeled at creation time, while intermediate nodes need to be labeled manually after creation.
 
 ## Testing
 

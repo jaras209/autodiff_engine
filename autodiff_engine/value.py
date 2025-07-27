@@ -14,15 +14,18 @@ class Value:
         prev: Tuple[Value, ...] = (),
         op: Optional[Operation] = None,
         backward: Optional[Callable[[], None]] = None,
+        label: Optional[str] = None,
     ) -> None:
         self.value: float = value
         self.grad: float = 0.0
         self.op: Optional[Operation] = op
         self.prev: Tuple[Value, ...] = prev
         self._backward: Callable[[], None] = backward if backward is not None else lambda: None
+        self.label: Optional[str] = label
 
     def __repr__(self) -> str:
-        return f"Value(value={self.value}, grad={self.grad}, op={self.op})"
+        label_str = f", label='{self.label}'" if self.label is not None else ""
+        return f"Value(value={self.value}, grad={self.grad}, op={self.op}{label_str})"
 
     def __add__(self, other: Any) -> Value:
         if not isinstance(other, Value):
@@ -175,9 +178,15 @@ class Value:
             if id(v) in visited:
                 return
             visited.add(id(v))
-            label = f"<v> value={v.value:.4g}|<g> grad={v.grad:.4g}"
+            
+            # Use custom label if available, otherwise show value and grad
+            if v.label is not None:
+                node_label = f"<v> {v.label}|<g> grad={v.grad:.4g}"
+            else:
+                node_label = f"<v> value={v.value:.4g}|<g> grad={v.grad:.4g}"
+            
             color = leaf_color if not v.prev else value_color
-            dot.node(str(id(v)), label=label, fillcolor=color)
+            dot.node(str(id(v)), label=node_label, fillcolor=color)
             if v.op is not None:
                 op_id = f"op_{id(v)}"
                 dot.node(op_id, label=str(v.op), shape='circle', fillcolor=op_color, fontsize='16', fontcolor='black')
