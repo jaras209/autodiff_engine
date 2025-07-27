@@ -91,6 +91,8 @@ autodiff_engine/
 ├── operations.py         # Mathematical operations and their derivatives
 ├── test_autodiff.py     # Basic autodiff tests
 ├── test_trigonometric.py # Trigonometric function tests
+├── test_readme_examples.py # Tests for all README examples
+├── example_with_labels.py # Example demonstrating labeling functionality
 ├── requirements.txt      # Python dependencies
 └── README.md           # This file
 ```
@@ -147,7 +149,10 @@ Run the test suite:
 ```bash
 python test_autodiff.py
 python test_trigonometric.py
+python test_readme_examples.py
 ```
+
+The `test_readme_examples.py` file contains all the code examples from this README to ensure they work correctly.
 
 ## Examples
 
