@@ -1,0 +1,16 @@
+digraph {
+	bgcolor=white
+	node [fontname=Helvetica fontsize=12 shape=record style=filled]
+	4344429792 [label="<v> value=8|<g> grad=1" fillcolor="#8ecae6"]
+	op_4344429792 [label="+" fillcolor="#ffb703" fontcolor=black fontsize=16 shape=circle]
+	op_4344429792 -> 4344429792 [color="#ffb703" penwidth=2]
+	4345137744 [label="<v> value=6|<g> grad=1" fillcolor="#8ecae6"]
+	op_4345137744 [label="*" fillcolor="#ffb703" fontcolor=black fontsize=16 shape=circle]
+	op_4345137744 -> 4345137744 [color="#ffb703" penwidth=2]
+	4344273552 [label="<v> value=2|<g> grad=4" fillcolor="#d9ed92"]
+	4344273552 -> op_4345137744 [color="#219ebc" penwidth=2]
+	4340583632 [label="<v> value=3|<g> grad=2" fillcolor="#d9ed92"]
+	4340583632 -> op_4345137744 [color="#219ebc" penwidth=2]
+	4345137744 -> op_4344429792 [color="#219ebc" penwidth=2]
+	4344273552 -> op_4344429792 [color="#219ebc" penwidth=2]
+}
