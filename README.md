@@ -6,9 +6,7 @@ A Python implementation of automatic differentiation (autodiff) engine that supp
 
 - **Reverse-Mode Automatic Differentiation**: Efficiently computes gradients by propagating derivatives backward through the computational graph (backpropagation)
 - **Computational Graph Visualization**: Generates SVG visualizations of the computational graphs
-- **Basic Mathematical Operations**: Supports addition, subtraction, multiplication, division, and power operations
-- **Trigonometric Functions**: Implements sin, cos, tan, sinh, cosh, and tanh with their derivatives
-- **Exponential and Logarithmic Functions**: Supports exp and log operations
+- **Mathematical Operations**: Supports arithmetic, trigonometric, exponential, and logarithmic operations
 - **Chain Rule Support**: Automatically handles complex nested expressions using the chain rule
 - **Type Annotations**: Full type hints for better code maintainability and IDE support
 - **Labeled Values**: Value objects can be labeled for better graph visualization and debugging
@@ -45,7 +43,7 @@ z = x * y + x**2
 # Compute gradients
 z.backward()
 
-print(f"z = {z.data}")
+print(f"z = {z.value}")
 print(f"∂z/∂x = {x.grad}")
 print(f"∂z/∂y = {y.grad}")
 ```
@@ -57,10 +55,10 @@ from autodiff_engine.value import Value
 import math
 
 x = Value(math.pi / 4, label='x')
-y = Value.sin(x) + Value.cos(x)
+y = x.sin() + x.cos()
 y.backward()
 
-print(f"y = {y.data}")
+print(f"y = {y.value}")
 print(f"∂y/∂x = {x.grad}")
 ```
 
@@ -74,10 +72,10 @@ b = Value(3.0, label='b')
 c = Value(1.0, label='c')
 
 # Complex expression: (a^2 + b) * sin(c)
-result = (a**2 + b) * Value.sin(c)
+result = (a**2 + b) * c.sin()
 result.backward()
 
-print(f"Result = {result.data}")
+print(f"Result = {result.value}")
 print(f"∂result/∂a = {a.grad}")
 print(f"∂result/∂b = {b.grad}")
 print(f"∂result/∂c = {c.grad}")
@@ -103,21 +101,30 @@ autodiff_engine/
 
 The `Value` class is the core of the autodiff engine:
 
-- **Data**: Stores the actual numerical value
-- **Grad**: Stores the gradient with respect to this value
-- **Label**: Optional human-readable label for better graph visualization
-- **Children**: References to child nodes in the computational graph
-- **Operation**: The operation that created this value
+- **value**: The actual numerical value (float)
+- **grad**: The gradient with respect to this value (float, initialized to 0.0)
+- **op**: The operation that created this value (Operation object or None for leaf nodes)
+- **prev**: References to parent nodes in the computational graph (Tuple[Value, ...])
+- **label**: Optional human-readable label for better graph visualization
+- **_backward**: Internal callback function for custom backward logic
+
+### Operation Class
+
+Each mathematical operation is implemented as a class inheriting from the abstract `Operation` base class:
+
+- **forward()**: Computes the function value
+- **backward()**: Computes the gradients with respect to inputs
+- **__str__()**: String representation for graph visualization
 
 ### Supported Operations
 
-- **Arithmetic**: `+`, `-`, `*`, `/`, `**`
-- **Trigonometric**: `sin`, `cos`, `tan`, `sinh`, `cosh`, `tanh`
+- **Arithmetic**: `+`, `-`, `*`, `/`, `**`, `neg`
+- **Trigonometric**: `sin`, `cos`, `tan`, `cot`, `sinh`, `cosh`, `tanh`, `coth`
 - **Exponential/Logarithmic**: `exp`, `log`
 
 ### Computational Graph
 
-The engine automatically builds a computational graph as you perform operations. Each `Value` object maintains references to its children and the operation that created it, enabling efficient gradient computation through backpropagation.
+The engine automatically builds a computational graph as you perform operations. Each `Value` object maintains references to its parent nodes (`prev`) and the operation that created it (`op`), enabling efficient gradient computation through backpropagation.
 
 ### Labeling for Visualization
 
@@ -166,8 +173,8 @@ y = 3 * x + 1
 y.backward()
 
 print(f"f(x) = 3x + 1")
-print(f"f({x.data}) = {y.data}")
-print(f"f'({x.data}) = {x.grad}")  # Should be 3
+print(f"f({x.value}) = {y.value}")
+print(f"f'({x.value}) = {x.grad}")  # Should be 3
 ```
 
 ### Example 2: Quadratic Function
@@ -180,8 +187,8 @@ y = x**2 + 2*x + 1
 y.backward()
 
 print(f"f(x) = x² + 2x + 1")
-print(f"f({x.data}) = {y.data}")
-print(f"f'({x.data}) = {x.grad}")  # Should be 2x + 2 = 8
+print(f"f({x.value}) = {y.value}")
+print(f"f'({x.value}) = {x.grad}")  # Should be 2x + 2 = 8
 ```
 
 ### Example 3: Trigonometric Function
@@ -191,12 +198,12 @@ from autodiff_engine.value import Value
 import math
 
 x = Value(math.pi / 6, label='x')  # 30 degrees
-y = Value.sin(x)
+y = x.sin()
 y.backward()
 
 print(f"f(x) = sin(x)")
-print(f"f({x.data}) = {y.data}")
-print(f"f'({x.data}) = {x.grad}")  # Should be cos(x)
+print(f"f({x.value}) = {y.value}")
+print(f"f'({x.value}) = {x.grad}")  # Should be cos(x)
 ```
 
 ## Mathematical Background
@@ -231,18 +238,6 @@ For the function `f(x) = sin(x²)`:
 - **Memory Usage**: Each `Value` object stores the computational graph, which can grow large for complex expressions
 - **Computation**: Reverse-mode autodiff is efficient for functions with many inputs and few outputs (typical in machine learning)
 - **Scalability**: For large-scale applications, consider using established libraries like PyTorch or TensorFlow
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
-
-## License
-
-This project is open source and available under the MIT License.
 
 ## Acknowledgments
 
