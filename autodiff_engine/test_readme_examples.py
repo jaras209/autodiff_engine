@@ -2,6 +2,9 @@
 """
 Test file containing all examples from the README to ensure they work correctly.
 This file validates that all code examples in the documentation are functional.
+
+Note: This implementation uses reverse-mode automatic differentiation (backpropagation),
+not forward mode as originally described in the README.
 """
 
 import math
@@ -188,7 +191,8 @@ def test_chain_rule_example() -> None:
 
 def main() -> None:
     """Run all README example tests."""
-    print("Running all README example tests...\n")
+    print("Running all README example tests...")
+    print("Note: This implementation uses reverse-mode autodiff (backpropagation)\n")
     
     try:
         test_basic_usage()

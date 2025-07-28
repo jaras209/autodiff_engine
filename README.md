@@ -1,10 +1,10 @@
 # Autodiff Engine
 
-A Python implementation of automatic differentiation (autodiff) engine that supports forward mode differentiation with computational graph visualization.
+A Python implementation of automatic differentiation (autodiff) engine that supports reverse-mode differentiation (backpropagation) with computational graph visualization.
 
 ## Features
 
-- **Forward Mode Automatic Differentiation**: Efficiently computes gradients by propagating derivatives forward through the computational graph
+- **Reverse-Mode Automatic Differentiation**: Efficiently computes gradients by propagating derivatives backward through the computational graph (backpropagation)
 - **Computational Graph Visualization**: Generates SVG visualizations of the computational graphs
 - **Basic Mathematical Operations**: Supports addition, subtraction, multiplication, division, and power operations
 - **Trigonometric Functions**: Implements sin, cos, tan, sinh, cosh, and tanh with their derivatives
@@ -201,9 +201,13 @@ print(f"f'({x.data}) = {x.grad}")  # Should be cos(x)
 
 ## Mathematical Background
 
-### Forward Mode Automatic Differentiation
+### Reverse-Mode Automatic Differentiation (Backpropagation)
 
-Forward mode autodiff computes gradients by propagating derivatives forward through the computational graph. For each operation, we compute both the function value and its derivative simultaneously.
+This implementation uses reverse-mode autodiff, which computes gradients by:
+1. **Forward Pass**: Computing function values and building the computational graph
+2. **Backward Pass**: Propagating gradients backward through the graph using the chain rule
+
+Reverse-mode autodiff is particularly efficient for functions with many inputs and few outputs, making it ideal for machine learning applications.
 
 ### Chain Rule
 
@@ -225,7 +229,7 @@ For the function `f(x) = sin(x²)`:
 ## Performance Considerations
 
 - **Memory Usage**: Each `Value` object stores the computational graph, which can grow large for complex expressions
-- **Computation**: Forward mode is efficient for functions with few inputs and many outputs
+- **Computation**: Reverse-mode autodiff is efficient for functions with many inputs and few outputs (typical in machine learning)
 - **Scalability**: For large-scale applications, consider using established libraries like PyTorch or TensorFlow
 
 ## Contributing
